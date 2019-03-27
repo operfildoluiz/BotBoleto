@@ -19,6 +19,7 @@ async function init(path, spinner) {
   await page.type('#segundaViaFacil > ul li:nth-child(1) > input', process.env.COPEL_CPF)
   await page.type('#segundaViaFacil > ul li:nth-child(4) input', process.env.COPEL_NUM)
 
+  spinner.text = 'Vou te pedir um favor...'
   spinner.info()
 
   let code;
@@ -36,6 +37,7 @@ async function init(path, spinner) {
 
   await page.click('#segundaViaFacil input[type=submit]')
 
+  spinner.text = 'Localizando fatura'
   await page.waitForSelector('.conteudoInterna table a') 
   await page.evaluate(() => { 
 
@@ -45,6 +47,7 @@ async function init(path, spinner) {
     
   });
 
+  spinner.text = 'Dizendo quem é a mãe...'
   await page.waitForSelector('.conteudoInterna input:nth-child(2)') 
   await page.type('.conteudoInterna input:nth-child(2)', process.env.COPEL_MAE)
   await page.click('.conteudoInterna input[type=submit]')
@@ -58,6 +61,8 @@ async function init(path, spinner) {
     
   });
 
+  spinner.text = 'Buscando dados do boleto...'
+  
   await page.waitForSelector('#j_id7') 
   await page.waitForSelector('#j_id28') 
   
@@ -73,11 +78,15 @@ async function init(path, spinner) {
     return td.innerText;
   }));    
   
+  spinner.text = 'Gerando JSON com o boleto...'
+  
   let obj = {
     barcode: barcode[0],
     total: total[0],
     date: date[0],
   }
+  
+  spinner.text = 'Salvando...'
   
   fs.writeFileSync(`${path}/copel.json`, JSON.stringify(obj, null, 4))
 

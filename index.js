@@ -18,18 +18,18 @@ async function start() {
     spinner.succeed()
 
     spinner = ora('Iniciando o UnimedBot').start();
-    //await scrappers.unimed(currentPath)
+    spinner = await scrappers.unimed(currentPath, spinner)
     spinner.text = 'UnimedBot finalizado!';
     spinner.succeed()
 
     spinner = ora('Iniciando o CopelBot').start();
-    //spinner = await scrappers.copel(currentPath, spinner)
+    spinner = await scrappers.copel(currentPath, spinner)
     spinner.text = 'CopelBot finalizado!';
     spinner.succeed()
 
-    spinner = ora('Iniciando o GazBot').start();
+    spinner = ora('Iniciando o Ultragaz').start();
     spinner = await scrappers.ultragaz(currentPath, spinner)
-    spinner.text = 'GazBot finalizado!';
+    spinner.text = 'Ultragaz finalizado!';
     spinner.succeed()    
 
 }

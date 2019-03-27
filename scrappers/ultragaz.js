@@ -1,8 +1,7 @@
-const puppeteer = require('puppeteer'),
-      prompts = require('prompts');
+const puppeteer = require('puppeteer')
 
 const chromeOptions = {
-  headless:false,
+  headless:true,
   defaultViewport: null};
 
 async function init(path, spinner) {
@@ -26,26 +25,45 @@ async function init(path, spinner) {
     boga.click()
   });
 
+  spinner.text = 'Localizando o boleto'
   await page.waitForSelector('#demonstrativos-lista-demonstrativos_wrapper') 
 
-  let filtered = await page.evaluate(() => { 
+  let code = await page.evaluate((month) => { 
 
     let all = document.querySelectorAll('#demonstrativos-lista-demonstrativos_wrapper tr')
     let arr = Array.from(all)
-    return Array.from(arr.filter(tr => tr.children[4].innerText === "EMITIDO"))
+
+    let day = `/${month}/${(new Date()).getFullYear()}`
+
+    let el = Array.from(arr.filter(tr => 
+            tr.children[4].innerText === "EMITIDO"
+            && tr.children[2].innerText.indexOf(day) !== -1))
+            
+    if (el[0] !== undefined) {
+      return el[0].querySelector('td:last-child a').getAttribute('data-id')
+    }
+
+    return false
     
-  });
+  }, getCurrentMonth());
 
-  console.log(filtered);
-  
+  if (code) {
 
-  // for (let index = 0; index < filtered.length; index++) {
-
-  //   // await page.pdf({path: `${path}/gaz_${index}.pdf`})
-  // }
+    try {
+      await page.goto(`https://ug.force.com/mi/apex/MIBoletoPDF?bolId=${code}`)
+    } catch(e) {
+      await page.waitFor(3000)
+      browser.close()
+    }
+  }
 
   return spinner;
 }
 
+function getCurrentMonth() {
+  var date = new Date(),
+      month = date.getMonth() + 2;
+  return month+1 < 10 ? ("0" + month) : month;
+}
 
 module.exports = init
