@@ -10,8 +10,8 @@ Então esse bot faz isso pra mim. *É isso.*
 
 * [x] Unimed
 * [x] Copel
-* [ ] Ultragaz
-* [ ] DAS
+* [X] Ultragaz
+* [X] DAS
 * [ ] Nubank
 
 ## Importante
