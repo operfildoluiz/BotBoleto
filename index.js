@@ -43,7 +43,8 @@ async function start() {
         spinner.succed()
     })
 
-    Promise.all(promises)
+    await Promise.all(promises)
+    console.log('Finalizado')
 }
 
 start()
